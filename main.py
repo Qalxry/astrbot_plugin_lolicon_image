@@ -45,7 +45,7 @@ class RandomImagePlugin(Star):
                      else:
                         image_results.append(event.plain_result("没有找到图片。"))
                 for result in image_results:
-                    yield result
+                     yield result
 
 
             except httpx.HTTPError as e:
@@ -130,24 +130,24 @@ class RandomImagePlugin(Star):
         elif len(args) == 1:
             tags = [args[0]]
 
-        yield from self._get_image(event, 'regular', num=num, tags=tags)
+        await self._get_image(event, 'regular', num=num, tags=tags)
 
     @filter.command("original")
     async def original_image(self, event: AstrMessageEvent):
-        yield from self._resend_image(event, 'original')
+        await self._resend_image(event, 'original')
 
     @filter.command("small")
     async def small_image(self, event: AstrMessageEvent):
-        yield from self._resend_image(event, 'small')
+        await self._resend_image(event, 'small')
 
     @filter.command("thumb")
     async def thumb_image(self, event: AstrMessageEvent):
-         yield from self._resend_image(event, 'thumb')
+        await self._resend_image(event, 'thumb')
     
     @filter.command("mini")
     async def mini_image(self, event: AstrMessageEvent):
-        yield from self._resend_image(event, 'thumb')
+        await self._resend_image(event, 'thumb')
     
     @filter.command("regular")
     async def regular_image(self, event: AstrMessageEvent):
-        yield from self._resend_image(event, 'regular')
+        await self._resend_image(event, 'regular')

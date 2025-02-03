@@ -1,9 +1,22 @@
-# 随机数
-
-AstrBot 
-
-A template plugin for AstrBot plugin feature
-
+# setu
+*修改说明:**
+1.  **导入 `asyncio`:** 用于获取当前时间。
+2.  **添加 `self.cd` 和 `self.last_usage`:**
+    *   `self.cd`: 存储冷却时间，默认为 10 秒。
+    *   `self.last_usage`: 字典，存储每个用户上次使用 `/setu` 指令的时间。
+3.  **修改 `setu` 方法:**
+    *   获取当前时间 `now`。
+    *   检查用户是否在冷却时间内。如果在冷却时间内，回复剩余时间并返回。
+    *   如果不在冷却时间内，执行原有的涩图获取逻辑，并在成功发送图片后更新 `last_usage`。
+4.  **添加 `setucd` 指令:**
+    *   `@filter.command("setucd")` 注册 `setucd` 指令，用于设置冷却时间。
+    *   `async def set_setu_cd(self, event: AstrMessageEvent, cd: int)`:  接收用户输入的冷却时间 `cd`。
+    *   检查 `cd` 是否大于 0，如果不是则返回错误消息。
+    *   更新 `self.cd` 的值，并返回设置成功的消息
+**使用方法:**
+1.  重新加载或重启你的 AstrBot 插件。
+2.  使用 `/setu` 指令，你会受到冷却时间限制。
+3.  使用 `/setucd <冷却时间>` (例如 `/setucd 30`) 设置冷却时间，单位为秒。
 # 支持
 
 [帮助文档](https://astrbot.soulter.top/center/docs/%E5%BC%80%E5%8F%91/%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91/

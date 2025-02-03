@@ -12,8 +12,8 @@ class RandomImagePlugin(Star):
 
     async def _get_image(self, event: AstrMessageEvent, size: str, r18=None, num=1, tags=None):
         if r18 is None:
-            r18 = 1 if self.r18_enabled else 0 # 根据开关设置r18参数
-        
+            r18 = 1 if self.r18_enabled else 0
+
         async with httpx.AsyncClient() as client:
             try:
                 image_results = []
@@ -28,7 +28,7 @@ class RandomImagePlugin(Star):
                         image_data = data['data'][0]
                         image_url = image_data['urls'].get(size)
                         if not image_url:
-                            image_url = image_data['urls']['original'] # 如果指定尺寸没有，使用原图
+                            image_url = image_data['urls']['original']
                         tags_list = image_data.get('tags', [])
                         uid = image_data.get('uid', 'N/A')
                         aspect_ratio = image_data.get('aspectRatio', 'N/A')
@@ -40,16 +40,15 @@ class RandomImagePlugin(Star):
                                   f"用户ID: {uid}\n" \
                                   f"宽高比: {aspect_ratio}"
 
-                        self.last_image_data = {"url": image_url, "message": message} # 存储图片信息
+                        self.last_image_data = {"url": image_url, "message": message}
                         image_results.append(event.image_result(image_url, message))
                      else:
                         image_results.append(event.plain_result("没有找到图片。"))
                 for result in image_results:
-                    yield result
-
-
+                    await result
             except httpx.HTTPError as e:
                 yield event.plain_result(f"获取图片时发生错误: {e}")
+    
 
     async def _resend_image(self, event: AstrMessageEvent, size: str):
         if not self.last_image_data:
@@ -117,7 +116,7 @@ class RandomImagePlugin(Star):
 
     @filter.command("image")
     async def random_image(self, event: AstrMessageEvent):
-        args = event.__dict__.get('raw_message',"").split(" ")[1:]  # 获取命令后的所有参数
+        args = event.__dict__.get('raw_message',"").split(" ")[1:]
         tags = None
         num = 1
         if len(args) >= 2:

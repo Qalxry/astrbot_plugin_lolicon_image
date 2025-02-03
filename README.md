@@ -13,6 +13,7 @@
     *   `async def set_setu_cd(self, event: AstrMessageEvent, cd: int)`:  接收用户输入的冷却时间 `cd`。
     *   检查 `cd` 是否大于 0，如果不是则返回错误消息。
     *   更新 `self.cd` 的值，并返回设置成功的消息
+      
 **使用方法:**
 1.  重新加载或重启你的 AstrBot 插件。
 2.  使用 `/setu` 指令，你会受到冷却时间限制。

@@ -5,7 +5,7 @@ import httpx
 import json
 
 # 注册插件的装饰器
-@register("setu", "Setu Plugin", "一个发送随机涩图的插件", "1.0.0")
+@register("setu", "Setu Plugin", "一个发送随机涩图的插件", "1.0.1")
 class SetuPlugin(Star):
     def __init__(self, context: Context):
         super().__init__(context)
@@ -14,7 +14,7 @@ class SetuPlugin(Star):
     @filter.command("setu")
     async def setu(self, event: AstrMessageEvent):
         try:
-            async with httpx.AsyncClient() as client:
+             async with httpx.AsyncClient() as client:
                 resp = await client.get("https://api.lolicon.app/setu/v2?r18=0")
                 resp.raise_for_status()
                 data = resp.json()
@@ -23,7 +23,7 @@ class SetuPlugin(Star):
                     chain = [
                         At(qq=event.get_sender_id()),
                         Plain("给你一张涩图："),
-                        Image.fromURL(image_url),
+                        Image.fromURL(image_url, size='small'),
                     ]
                     yield event.chain_result(chain)
                 else:

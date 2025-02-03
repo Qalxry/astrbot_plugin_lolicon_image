@@ -117,7 +117,7 @@ class RandomImagePlugin(Star):
 
     @filter.command("image")
     async def random_image(self, event: AstrMessageEvent):
-        args = event.message.content.split(" ")[1:]  # 获取命令后的所有参数
+        args = event.get_plain_text().split(" ")[1:]  # 获取命令后的所有参数
         tags = None
         num = 1
         if len(args) >= 2:

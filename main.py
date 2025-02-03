@@ -14,14 +14,30 @@ class ImageSenderPlugin(Star):
     async def send_image(self, event: AstrMessageEvent):
         try:
             async with httpx.AsyncClient() as client:
-                response = await client.get("https://api.lolicon.app/setu/v2")
-                response.raise_for_status()  # Raise an exception for bad status codes
-                data = response.json()
-                if data and data['data']:
-                    image_url = data['data'][0]['urls']['original']
-                    yield event.image_result(image_url)
+                parts = event.message.content.split()
+                if len(parts) == 3 and parts[0] == "/image":
+                    tag = parts[1]
+                    num = parts[2]
+                    if tag == "cat":
+                        response = await client.get("https://api.thecatapi.com/v1/images/search")
+                        response.raise_for_status()
+                        data = response.json()
+                        if data:
+                             image_url = data[0]['url']
+                             yield event.image_result(image_url)
+                        else:
+                             yield event.plain_result("未能获取到猫图片")
+                    else:
+                        response = await client.get(f"https://api.lolicon.app/setu/v2?tag={tag}")
+                        response.raise_for_status()
+                        data = response.json()
+                        if data and data['data'] and len(data['data']) >= int(num):
+                            image_url = data['data'][int(num)-1]['urls']['original']
+                            yield event.image_result(image_url)
+                        else:
+                            yield event.plain_result(f"未能获取到{tag}图片")
                 else:
-                    yield event.plain_result("未能获取到图片")
+                    yield event.plain_result("命令格式错误，请使用/image <tag> <num>")
         except httpx.HTTPError as e:
             yield event.plain_result(f"获取图片失败: {e}")
         except Exception as e:

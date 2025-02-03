@@ -6,7 +6,7 @@ import json
 import asyncio
 
 # 注册插件的装饰器
-@register("setu", "Setu Plugin", "一个发送随机涩图的插件", "1.0.2")
+@register("setu", "Setu Plugin", "一个发送随机涩图的插件", "1.0.3")
 class SetuPlugin(Star):
     def __init__(self, context: Context):
         super().__init__(context)
@@ -52,3 +52,23 @@ class SetuPlugin(Star):
             return
         self.cd = cd
         yield event.plain_result(f"涩图指令冷却时间已设置为 {cd} 秒。")
+
+    @filter.command("setu_help")
+    async def setu_help(self, event: AstrMessageEvent):
+        help_text = """
+        **涩图插件帮助**
+
+        **可用命令:**
+        - `/setu`: 发送一张随机涩图。
+        - `/setucd <冷却时间>`: 设置涩图指令的冷却时间（秒）。
+        - `/setu_help`: 显示此帮助信息。
+
+        **使用方法:**
+        - 直接发送 `/setu` 即可获取一张随机涩图。
+        - 使用 `/setucd 15` 将冷却时间设置为 15 秒。
+
+        **注意:**
+        - 涩图图片大小为 small。
+        - 冷却时间默认为 10 秒。
+        """
+        yield event.plain_result(help_text)

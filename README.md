@@ -13,6 +13,11 @@
     *   `async def set_setu_cd(self, event: AstrMessageEvent, cd: int)`:  接收用户输入的冷却时间 `cd`。
     *   检查 `cd` 是否大于 0，如果不是则返回错误消息。
     *   更新 `self.cd` 的值，并返回设置成功的消息
+1.  **添加 `setu_help` 指令:**
+    *   `@filter.command("setu_help")` 注册 `setu_help` 指令。
+    *   `async def setu_help(self, event: AstrMessageEvent)`:  定义 `setu_help` 方法。
+    *   `help_text`: 包含插件的使用说明、可用命令和注意事项的文本。
+    *   使用 `yield event.plain_result(help_text)` 发送帮助文本。
       
 **使用方法:**
 1.  重新加载或重启你的 AstrBot 插件。

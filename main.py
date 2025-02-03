@@ -3,41 +3,45 @@ from astrbot.api.star import Context, Star, register
 import httpx
 import random
 
-# 注册插件的装饰器
 @register("image_sender", "Image Sender", "一个发送图片的插件", "1.0.0")
 class ImageSenderPlugin(Star):
     def __init__(self, context: Context):
         super().__init__(context)
     
-    # 注册指令的装饰器。指令名为 image。注册成功后，发送 `/image` 就会触发这个指令，并发送图片
     @filter.command("image")
     async def send_image(self, event: AstrMessageEvent):
+        args = event.text.split()
+        if len(args) < 2:
+            yield event.plain_result("使用方法: /image <tag> <num>")
+            return
+        
+        tag = args[1]
+        num = 1
+        if len(args) > 2:
+            try:
+                num = int(args[2])
+                if num <= 0 or num > 10:
+                   yield event.plain_result("数量必须是1到10之间的整数")
+                   return
+            except ValueError:
+                yield event.plain_result("数量必须是整数")
+                return
+        
         try:
             async with httpx.AsyncClient() as client:
-                parts = event.message.content.split()
-                if len(parts) == 3 and parts[0] == "/image":
-                    tag = parts[1]
-                    num = parts[2]
-                    if tag == "cat":
-                        response = await client.get("https://api.thecatapi.com/v1/images/search")
-                        response.raise_for_status()
-                        data = response.json()
-                        if data:
-                             image_url = data[0]['url']
-                             yield event.image_result(image_url)
-                        else:
-                             yield event.plain_result("未能获取到猫图片")
-                    else:
-                        response = await client.get(f"https://api.lolicon.app/setu/v2?tag={tag}")
-                        response.raise_for_status()
-                        data = response.json()
-                        if data and data['data'] and len(data['data']) >= int(num):
-                            image_url = data['data'][int(num)-1]['urls']['original']
-                            yield event.image_result(image_url)
-                        else:
-                            yield event.plain_result(f"未能获取到{tag}图片")
+                params = {
+                    "tag": tag,
+                    "num": num
+                }
+                response = await client.get("https://api.lolicon.app/setu/v2", params=params)
+                response.raise_for_status()
+                data = response.json()
+                if data and data['data']:
+                    for item in data['data']:
+                        image_url = item['urls']['original']
+                        yield event.image_result(image_url)
                 else:
-                    yield event.plain_result("命令格式错误，请使用/image <tag> <num>")
+                    yield event.plain_result("未能获取到图片")
         except httpx.HTTPError as e:
             yield event.plain_result(f"获取图片失败: {e}")
         except Exception as e:

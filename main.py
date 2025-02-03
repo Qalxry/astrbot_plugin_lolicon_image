@@ -45,7 +45,7 @@ class RandomImagePlugin(Star):
                      else:
                         image_results.append(event.plain_result("没有找到图片。"))
                 for result in image_results:
-                     yield result
+                    yield result
 
 
             except httpx.HTTPError as e:
@@ -117,7 +117,7 @@ class RandomImagePlugin(Star):
 
     @filter.command("image")
     async def random_image(self, event: AstrMessageEvent):
-        args = event.text.split(" ")[1:]  # 获取命令后的所有参数
+        args = event.message.content.split(" ")[1:]  # 获取命令后的所有参数
         tags = None
         num = 1
         if len(args) >= 2:
@@ -142,7 +142,7 @@ class RandomImagePlugin(Star):
 
     @filter.command("thumb")
     async def thumb_image(self, event: AstrMessageEvent):
-        await self._resend_image(event, 'thumb')
+         await self._resend_image(event, 'thumb')
     
     @filter.command("mini")
     async def mini_image(self, event: AstrMessageEvent):

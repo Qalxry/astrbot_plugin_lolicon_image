@@ -6,7 +6,7 @@ import json
 import asyncio
 
 # 注册插件的装饰器
-@register("setu", "Setu Plugin", "一个发送随机涩图的插件", "1.0.3")
+@register("setu", "rikka", "一个发送随机涩图的插件", "1.0.3")
 class SetuPlugin(Star):
     def __init__(self, context: Context):
         super().__init__(context)

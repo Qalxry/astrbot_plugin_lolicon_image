@@ -5,15 +5,20 @@ import httpx
 import json
 import asyncio
 
-# 注册插件的装饰器
 @register("setu", "rikka", "一个发送随机涩图的插件", "1.0.3")
 class SetuPlugin(Star):
     def __init__(self, context: Context):
         super().__init__(context)
         self.cd = 10  # 默认冷却时间为 10 秒
         self.last_usage = {} # 存储每个用户上次使用指令的时间
+        self.semaphore = asyncio.Semaphore(10)  # 限制并发请求数量为 10
 
-    # 注册指令的装饰器。指令名为 setu。注册成功后，发送 `/setu` 就会触发这个指令
+    async def fetch_setu(self):
+        async with httpx.AsyncClient(timeout=10.0) as client:
+            resp = await client.get("https://api.lolicon.app/setu/v2?r18=0")
+            resp.raise_for_status()
+            return resp.json()
+
     @filter.command("setu")
     async def setu(self, event: AstrMessageEvent):
         user_id = event.get_sender_id()
@@ -24,11 +29,9 @@ class SetuPlugin(Star):
             yield event.plain_result(f"冷却中，请等待 {remaining_time:.1f} 秒后重试。")
             return
 
-        try:
-             async with httpx.AsyncClient() as client:
-                resp = await client.get("https://api.lolicon.app/setu/v2?r18=0")
-                resp.raise_for_status()
-                data = resp.json()
+        async with self.semaphore:  # 获取信号量，限制并发
+            try:
+                data = await self.fetch_setu() # 使用单独的函数获取数据
                 if data['data']:
                     image_url = data['data'][0]['urls']['original']
                     chain = [
@@ -40,10 +43,18 @@ class SetuPlugin(Star):
                     self.last_usage[user_id] = now
                 else:
                     yield event.plain_result("没有找到涩图。")
-        except httpx.HTTPError as e:
-            yield event.plain_result(f"获取涩图时发生错误: {e}")
-        except json.JSONDecodeError as e:
-            yield event.plain_result(f"解析JSON时发生错误: {e}")
+            except httpx.HTTPStatusError as e:
+                yield event.plain_result(f"获取涩图时发生HTTP错误: {e.response.status_code}")
+            except httpx.TimeoutException:
+                yield event.plain_result("获取涩图超时，请稍后重试。")
+            except httpx.HTTPError as e:
+                yield event.plain_result(f"获取涩图时发生网络错误: {e}")
+            except json.JSONDecodeError as e:
+                yield event.plain_result(f"解析JSON时发生错误: {e}")
+            except Exception as e:
+                self.context.logger.exception("Setu command error:") # 记录异常，方便调试
+                yield event.plain_result(f"发生未知错误: {e}")
+
 
     @filter.command("setucd")
     async def set_setu_cd(self, event: AstrMessageEvent, cd: int):

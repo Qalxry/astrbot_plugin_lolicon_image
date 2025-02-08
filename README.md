@@ -2,8 +2,8 @@
 - api文档 https://api.lolicon.app/
 
 ## 指令
-**/setu
-**/setu '萝莉' or /setu '萝莉' '白丝'
+- **/setu
+- **/setu '萝莉' or /setu '萝莉' '白丝'
 
 ## 更新
 

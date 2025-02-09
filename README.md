@@ -12,5 +12,6 @@
 - **3**. 配置文件修改图片大小规格, `original` > `regular` > `small` > `thumb` > `mini`, 默认是regular
 - **4**. 配置文件修改r18开关, `0` 非R18 `1` R18 `2` 混合
 
+## Astrbot文档
 [帮助文档](https://astrbot.soulter.top/center/docs/%E5%BC%80%E5%8F%91/%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91/
 )

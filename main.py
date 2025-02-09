@@ -34,7 +34,7 @@ class SetuPlugin(Star):
 
         # 从用户消息中获取tag（假设用户输入格式为 "setu tag1 tag2"）
         tags = event.get_message_str().split()[1:]  # 获取所有tag
-        tag_param = '|'.join(tags)  # 将tag合并为字符串
+        tag_param = '&tag='.join(tags)  # 将tag合并为字符串
 
         # 获取图片
         url = f"https://api.lolicon.app/setu/v2?r18={self.r18}&num={self.num}&size={self.size}&tag={tag_param}"

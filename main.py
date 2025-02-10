@@ -61,8 +61,8 @@ class SetuPlugin(Star):
 
                     chain = [
                         At(qq=event.get_sender_id()),  # At 消息发送者
-                        Plain("你要的涩图来咯\n"),  # 发送文字
-                        Plain(f"tag: {img_tag},\n"),
+                        Plain("主人，这是香草找到的涩图：\n"),  # 发送文字
+                        # Plain(f"tag: {img_tag},\n"),
                         Plain(f"pid: {img_pid},\ntitle: {img_title}"),  # 使用换行
                         Image.fromURL(image_url),  # 发送图片
                     ]
